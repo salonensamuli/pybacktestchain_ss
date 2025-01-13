@@ -1,13 +1,14 @@
 import pandas as pd
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Optional, Type
 
 import os 
 import pickle
-from pybacktestchain.data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
-from pybacktestchain.utils import generate_random_name
-from pybacktestchain.blockchain import Block, Blockchain
+from pybacktestchain_ss.data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
+from pybacktestchain_ss.utils import generate_random_name
+from pybacktestchain_ss.blockchain import Block, Blockchain
 from numba import jit 
 
 # Setup logging
@@ -215,31 +216,54 @@ class StopLoss(RiskModel):
             if loss < -self.threshold:
                 logging.info(f"Stop loss triggered for {ticker} at {t}. Selling all shares.")
                 broker.sell(ticker, position.quantity, current_price, t)
+
+@dataclass
+class ProfitTaking(RiskModel):
+    """ ProfitTaking is the opposite RiskModel to StopLoss """
+    threshold: float = 0.1
+    def trigger_profit_taking(self, t: datetime, portfolio: dict, prices: dict, broker: Broker):
+
+        for ticker, position in list(broker.positions.items()):
+            entry_price = broker.entry_prices[ticker]
+            current_price = prices.get(ticker)
+            if current_price is None:
+                logging.warning(f"Price for {ticker} not available on {t}")
+                continue
+            # Calculate the profit percentage
+            profit = (current_price - entry_price) / entry_price
+            if profit > self.threshold:
+                logging.info(f"Profit taking triggered for {ticker} at {t}. Selling all shares.")
+                broker.sell(ticker, position.quantity, current_price, t)
+
 @dataclass
 class Backtest:
     initial_date: datetime
     final_date: datetime
-    universe = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'INTC', 'CSCO', 'NFLX']
+    universe: list = field(default_factory=lambda: \
+                           ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'INTC', 'CSCO', 'NFLX'])
+                            # making the universe mutable
     information_class : type  = Information
     s: timedelta = timedelta(days=360)
     time_column: str = 'Date'
     company_column: str = 'ticker'
-    adj_close_column : str ='Adj Close'
-    rebalance_flag : type = EndOfMonth
-    risk_model : type = StopLoss
-    initial_cash: int = 1000000  # Initial cash in the portfolio
+    adj_close_column: str = 'Adj Close'
+    rebalance_flag: type = EndOfMonth
+    risk_model: Optional[Type[RiskModel]] = None # making risk model optional, StopLoss or ProfitTaking
+    risk_threshold: float = 0.1
+    initial_cash: int = 1000000 # making this mutable
     name_blockchain: str = 'backtest'
     verbose: bool = True
-    broker = Broker(cash=initial_cash, verbose=verbose)
+    broker: Broker = field(init=False)
     
     def __post_init__(self):
+        self.broker = Broker(cash=self.initial_cash, verbose=self.verbose) # broker starts with the initial cash set when calling backtest
         self.backtest_name = generate_random_name()
         self.broker.initialize_blockchain(self.name_blockchain)
 
     def run_backtest(self):
         logging.info(f"Running backtest from {self.initial_date} to {self.final_date}.")
         logging.info(f"Retrieving price data for universe")
-        self.risk_model = self.risk_model(threshold=0.1)
+        self.risk_model = self.risk_model(threshold=self.risk_threshold)
         # self.initial_date to yyyy-mm-dd format
         init_ = self.initial_date.strftime('%Y-%m-%d')
         # self.final_date to yyyy-mm-dd format
@@ -258,12 +282,19 @@ class Backtest:
         
         # Run the backtest
         for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):
-            
+        
             if self.risk_model is not None:
                 portfolio = info.compute_portfolio(t, info.compute_information(t))
-                prices = info.get_prices(t)
-                self.risk_model.trigger_stop_loss(t, portfolio, prices, self.broker)
-           
+                prices = info.get_prices(t)  
+                    
+                # Trigger stop loss
+                if isinstance(self.risk_model, StopLoss):
+                    self.risk_model.trigger_stop_loss(t, portfolio, prices, self.broker)
+                
+                # Trigger profit-taking
+                if isinstance(self.risk_model, ProfitTaking):
+                    self.risk_model.trigger_profit_taking(t, portfolio, prices, self.broker)
+
             if self.rebalance_flag().time_to_rebalance(t):
                 logging.info("-----------------------------------")
                 logging.info(f"Rebalancing portfolio at {t}")
