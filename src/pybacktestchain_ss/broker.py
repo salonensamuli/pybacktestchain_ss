@@ -194,10 +194,23 @@ class EndOfMonth(RebalanceFlag):
         last_business_day = pd_date + pd.offsets.BMonthEnd(0)
         # Check if the given date matches the last business day
         return pd_date == last_business_day
+    
+@dataclass
+class EndOfWeek(RebalanceFlag):
+    def time_to_rebalance(self, t: datetime):
+        """ Determines if the given date is the last business day of the week """
+        # Convert to pandas Timestamp for convenience
+        pd_date = pd.Timestamp(t)
+        # Get the next business day after the current date
+        next_business_day = pd_date + pd.offsets.BDay(1)
+        # Check if the next business day is in a new week
+        return next_business_day.week > pd_date.week
 
 @dataclass
 class RiskModel:
     def trigger_stop_loss(self, t: datetime, portfolio: dict, prices: dict):
+        pass
+    def trigger_profit_taking(self, t: datetime, portfolio: dict, prices: dict):
         pass
 
 @dataclass
@@ -247,7 +260,7 @@ class Backtest:
     time_column: str = 'Date'
     company_column: str = 'ticker'
     adj_close_column: str = 'Adj Close'
-    rebalance_flag: type = EndOfMonth
+    rebalance_flag: type = EndOfMonth # or EndOfWeek
     risk_model: Optional[Type[RiskModel]] = None # making risk model optional, StopLoss or ProfitTaking
     risk_threshold: float = 0.1
     initial_cash: int = 1000000 # making this mutable
