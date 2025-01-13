@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.2.0 (2025-01-13)
+
+### Features
+
+- **broker**: Added EndOfWeek class for rebalancing
+  ([`bf8d914`](https://github.com/salonensamuli/pybacktestchain_ss/commit/bf8d9141d3ac70c388767ae8cecf9985e2beba5f))
+
+
 ## v0.1.0 (2025-01-13)
 
 ### Features
