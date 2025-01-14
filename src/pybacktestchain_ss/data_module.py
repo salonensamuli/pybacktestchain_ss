@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import logging 
 from scipy.optimize import minimize
 import numpy as np
+from typing import Optional, Type, Callable
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -92,6 +93,7 @@ class Information:
     time_column: str = 'Date'
     company_column: str = 'ticker'
     adj_close_column: str = 'Close'
+    portfolio_strategy: Callable = None
 
     def slice_data(self, t : datetime):
 
@@ -125,12 +127,30 @@ class Information:
     def compute_information(self, t : datetime):  
         pass
 
-    def compute_portfolio(self, t : datetime,  information_set : dict):
+    def portfolio_strategy(self, t : datetime, information_set : dict):
+        return self.portfolio_strategy(t, information_set)
+
+    def risk_averse_portfolio(self, t : datetime,  information_set : dict):
         pass
      
+    def minimum_variance_portfolio(self, t : datetime,  information_set : dict):
+        pass
+
+    def maximum_return_portfolio(self, t : datetime,  information_set : dict):
+        pass
+
+    def equal_weight_portfolio(self, t : datetime,  information_set : dict):
+        pass
+
+    def equal_risk_portfolio(self, t : datetime,  information_set : dict):
+        pass
+
+    def maximum_sharpe_portfolio(self, t : datetime,  information_set : dict):
+        pass
+
 @dataclass
 class FirstTwoMoments(Information):
-    def compute_portfolio(self, t:datetime, information_set):
+    def risk_averse_portfolio(self, t:datetime, information_set):
         try:
             mu = information_set['expected_return']
             Sigma = information_set['covariance_matrix']
@@ -160,7 +180,105 @@ class FirstTwoMoments(Information):
             return portfolio
         except Exception as e:
             # if something goes wrong return an equal weight portfolio but let the user know 
-            logging.warning("Error computing portfolio, returning equal weight portfolio")
+            logging.warning("Error computing Risk Averse Portfolio, returning equal weight portfolio")
+            logging.warning(e)
+            return {k: 1/len(information_set['companies']) for k in information_set['companies']}
+
+    def minimum_variance_portfolio(self, t:datetime, information_set):
+        """ Finding the minimum variance portfolio which is the vertex of the parabola (closed form solution)"""
+        try:
+            Sigma = information_set['covariance_matrix']
+            n = Sigma.shape[0]
+            ones = np.ones(n)
+            
+            # solve for the weights: w = Σ⁻¹1 / (1ᵀΣ⁻¹1)
+            inv_Sigma = np.linalg.inv(Sigma)
+            weights = inv_Sigma @ ones / (ones.T @ inv_Sigma @ ones)
+            
+            portfolio = {company: weights[i] for i, company in enumerate(information_set['companies'])}
+            return portfolio
+        except Exception as e:
+            logging.warning("Error computing Minimum Variance Portfolio, returning equal weight portfolio")
+            logging.warning(e)
+            return {k: 1/len(information_set['companies']) for k in information_set['companies']}
+        
+    def maximum_return_portfolio(self, t:datetime, information_set):
+        """ Finding the asset with the highest expected return and investing all into that """
+        try:
+            mu = information_set['expected_return']
+            companies = information_set['companies']
+            
+            # find the index of the maximum return, as this asset will get 100% of the weight
+            max_index = np.argmax(mu)
+            
+            portfolio = {company: 0 for company in companies}
+            portfolio[companies[max_index]] = 1.0  # allocate 100% to the max return asset
+            return portfolio
+        except Exception as e:
+            logging.warning("Error computing Maximum Return Portfolio, returning equal weight portfolio")
+            logging.warning(e)
+            return {k: 1/len(information_set['companies']) for k in information_set['companies']}
+
+    def equal_weight_portfolio(self, t:datetime, information_set):
+        """" Classic equally weighted portfolio """
+        try:
+            companies = information_set['companies']
+            n = len(companies)
+            # setting equal weights
+            portfolio = {company: 1 / n for company in companies}
+            return portfolio
+        except Exception as e:
+            logging.warning("Error computing Equal Weight Portfolio")
+            logging.warning(e)
+            return {}
+
+    def equal_risk_portfolio(self, t:datetime, information_set):
+        """" Weighting each asset so that the risk contributed is equal (also known as risk parity) """
+        try:
+            Sigma = information_set['covariance_matrix']
+            companies = information_set['companies']
+            n = len(companies)
+            # initially equal weights
+            x0 = np.ones(n) / n
+            # function to calculate risk contribution of the assets
+            def risk_contribution(weights):
+                portfolio_variance = weights.T @ Sigma @ weights
+                marginal_contributions = Sigma @ weights
+                return weights * marginal_contributions / portfolio_variance
+            # objective is to minimize the squared deviation of risk contributions
+            def objective(weights):
+                contributions = risk_contribution(weights)
+                equal_contribution = np.ones(n) / n
+                return np.sum((contributions - equal_contribution) ** 2)
+            constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
+            bounds = [(0, 1)] * n
+            res = minimize(objective, x0, constraints=constraints, bounds=bounds)
+            
+            if res.success:
+                portfolio = {company: res.x[i] for i, company in enumerate(companies)}
+            else:
+                raise Exception("Optimization did not converge")
+            
+            return portfolio
+        except Exception as e:
+            logging.warning("Error computing Equal Risk Portfolio, returning equal weight portfolio")
+            logging.warning(e)
+            return {k: 1/len(information_set['companies']) for k in information_set['companies']}
+
+    def maximum_sharpe_portfolio(self, t:datetime, information_set, risk_free_rate=0.0):
+        """ Finding the maximum sharpe portfolio, aka tangency portfolio (with closed form solution) """
+        try:
+            mu = information_set['expected_return']
+            mu_excess = mu - risk_free_rate
+            Sigma = information_set['covariance_matrix']
+            n = len(mu)
+            ones = np.ones(n)
+            inv_Sigma = np.linalg.inv(Sigma)
+            weights = inv_Sigma @ mu_excess / (ones.T @ inv_Sigma @ mu_excess)
+            portfolio = {company: weights[i] for i, company in enumerate(information_set['companies'])}
+            return portfolio
+        except Exception as e:
+            logging.warning("Error computing Maximum Sharpe Portfolio, returning equal weight portfolio")
             logging.warning(e)
             return {k: 1/len(information_set['companies']) for k in information_set['companies']}
 
