@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-01-14)
+
+### Features
+
+- **broker**: Added new strategies to the broker, also added a new testing notebook
+  ([`6b12a6e`](https://github.com/salonensamuli/pybacktestchain_ss/commit/6b12a6e1f39ab298f872c2227acd18b76475aab1))
+
+
 ## v0.2.0 (2025-01-13)
 
 ### Features
