@@ -7,9 +7,10 @@ from typing import Optional, Type, Callable
 import sys
 import os 
 import pickle
-from pybacktestchain_ss.data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
-from pybacktestchain_ss.utils import generate_random_name
-from pybacktestchain_ss.blockchain import Block, Blockchain
+from .data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
+from .utils import generate_random_name
+from .blockchain import Block, Blockchain
+from .portfolio_strategies import PortfolioStrategy, RiskAverseStrategy, MaximumReturnStrategy, MaximumSharpePortfolio, MinimumVarianceStrategy, EqualRiskStrategy, EqualWeightStrategy
 from numba import jit 
 
 # Setup logging
@@ -256,8 +257,8 @@ class Backtest:
     universe: list = field(default_factory=lambda: \
                            ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'INTC', 'CSCO', 'NFLX'])
                             # making the universe mutable
-    portfolio_strategy: Callable = None
-    information_class : type  = Information
+    portfolio_strategy: PortfolioStrategy = field(default_factory=lambda: RiskAverseStrategy)
+    information_class : Type[Information] = FirstTwoMoments
     s: timedelta = timedelta(days=360)
     time_column: str = 'Date'
     company_column: str = 'ticker'
@@ -300,13 +301,8 @@ class Backtest:
         for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):
         
             if self.risk_model is not None:
-                try:
-                    portfolio = info.portfolio_strategy(info, t, info.compute_information(t))
+                portfolio = info.compute_portfolio(t, info.compute_information(t))
                     #portfolio = self.portfolio_strategy(info, t, info.compute_information(t))
-                except Exception as e:
-                    logging.warning("Portfolio strategy not chosen, try again.")
-                    logging.warning(e)
-                    sys.exit()
                 prices = info.get_prices(t)  
                     
                 # Trigger stop loss
@@ -321,13 +317,8 @@ class Backtest:
                 logging.info("-----------------------------------")
                 logging.info(f"Rebalancing portfolio at {t}")
                 information_set = info.compute_information(t)
-                try:
-                    portfolio = info.portfolio_strategy(self, t, information_set)
+                portfolio = info.compute_portfolio(t, information_set)
                     #portfolio = self.portfolio_strategy(info, t, information_set)
-                except Exception as e:
-                        logging.warning("Portfolio strategy not chosen, try again.")
-                        logging.warning(e)
-                        sys.exit()
                 prices = info.get_prices(t)
                 self.broker.execute_portfolio(portfolio, prices, t)
 
