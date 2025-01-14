@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.4.0 (2025-01-14)
+
+### Features
+
+- **portfolio_strategies**: Created a new .py file to make editing and storing different strategies
+  more simple. Also detached the strategies from the Information class for easier manipulation. The
+  user can now choose which strategy to implement (note: maximum sharpe and equal var strategies
+  still have convergence issues).
+  ([`31b1729`](https://github.com/salonensamuli/pybacktestchain_ss/commit/31b1729fc54a66c58dd39dfa616eed3b8523ed76))
+
+
 ## v0.3.0 (2025-01-14)
 
 ### Features
