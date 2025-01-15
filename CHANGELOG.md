@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.5.2 (2025-01-15)
+
+### Bug Fixes
+
+- **imports**: Fixed another problem with the imports where some now renamed strategies had their
+  old names and thus leading to importing errors. Also cleaned the code a little bit by removing
+  unnecessary imports.
+  ([`096fd07`](https://github.com/salonensamuli/pybacktestchain_ss/commit/096fd07a1c85b700f662d15255d807f7105205e3))
+
+
 ## v0.5.1 (2025-01-15)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pybacktestchain_ss"
-version = "0.5.1"
+version = "0.5.2"
 description = "Enchancing the pybacktestchain package. Made by Samuli Salonen as the individual assignment for the M203 Python course."
 authors = ["Samuli Salonen"]
 license = "MIT"
