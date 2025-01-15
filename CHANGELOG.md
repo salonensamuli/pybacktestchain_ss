@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.0 (2025-01-15)
+
+### Features
+
+- **streamlit**: Removed some unused code and added the first iteration of the streamlit user
+  interface code for testing on the streamlit cloud.
+  ([`102fa32`](https://github.com/salonensamuli/pybacktestchain_ss/commit/102fa32efed469b261923236c8877dd9e946abbf))
+
+
 ## v0.4.0 (2025-01-14)
 
 ### Features
