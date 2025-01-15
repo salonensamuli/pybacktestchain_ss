@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.5.1 (2025-01-15)
+
+### Bug Fixes
+
+- **imports**: Fixed some library importing problems (some imports had .file instead of
+  pybacktestchain_ss.file) related to the streamlit user interface.
+  ([`217cf93`](https://github.com/salonensamuli/pybacktestchain_ss/commit/217cf93c8a7e80450a5ffc57ceadc94c3d0086f5))
+
+
 ## v0.5.0 (2025-01-15)
 
 ### Features
