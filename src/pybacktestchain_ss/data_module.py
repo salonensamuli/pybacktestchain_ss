@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import logging 
 from typing import Optional, Type, Callable
-from .portfolio_strategies import PortfolioStrategy
+from pybacktestchain_ss.portfolio_strategies import PortfolioStrategy
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

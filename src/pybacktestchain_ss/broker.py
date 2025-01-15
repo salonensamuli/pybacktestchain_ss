@@ -7,10 +7,10 @@ from typing import Optional, Type, Callable
 import sys
 import os 
 import pickle
-from .data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
-from .utils import generate_random_name
-from .blockchain import Block, Blockchain
-from .portfolio_strategies import PortfolioStrategy, RiskAverseStrategy, MaximumReturnStrategy, MaximumSharpePortfolio, MinimumVarianceStrategy, EqualRiskStrategy, EqualWeightStrategy
+from pybacktestchain_ss.data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
+from pybacktestchain_ss.utils import generate_random_name
+from pybacktestchain_ss.blockchain import Block, Blockchain
+from pybacktestchain_ss.portfolio_strategies import PortfolioStrategy, RiskAverseStrategy, MaximumReturnStrategy, MaximumSharpePortfolio, MinimumVarianceStrategy, EqualRiskStrategy, EqualWeightStrategy
 from numba import jit 
 
 # Setup logging
