@@ -137,7 +137,7 @@ class EqualRiskStrategy(PortfolioStrategy):
             return {k: 1/len(information_set['companies']) for k in information_set['companies']}
 
 @dataclass
-class MaximumSharpePortfolio(PortfolioStrategy):
+class MaximumSharpeStrategy(PortfolioStrategy):
     def optimize_portfolio(self, information_set, risk_free_rate=0.0):
         """ Finding the maximum sharpe portfolio, aka tangency portfolio (with closed form solution) """
         try:

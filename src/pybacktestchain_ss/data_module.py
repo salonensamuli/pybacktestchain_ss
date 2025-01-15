@@ -73,8 +73,6 @@ def get_stocks_data(tickers, start_date, end_date):
     data = pd.concat(dfs)
     return data
 
-# test 
-# get_stocks_data(['AAPL', 'MSFT'], '2000-01-01', '2020-12-31')
 #---------------------------------------------------------
 # Classes 
 #---------------------------------------------------------
@@ -128,27 +126,6 @@ class Information:
 
     def compute_portfolio(self, t:datetime):
         pass
-
-    # def portfolio_strategy(self, t : datetime, information_set : dict):
-    #     return self.portfolio_strategy(t, information_set)
-
-    # def risk_averse_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
-     
-    # def minimum_variance_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
-
-    # def maximum_return_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
-
-    # def equal_weight_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
-
-    # def equal_risk_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
-
-    # def maximum_sharpe_portfolio(self, t : datetime,  information_set : dict):
-    #     pass
 
 @dataclass
 class FirstTwoMoments(Information):

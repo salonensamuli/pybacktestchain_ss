@@ -1,0 +1,119 @@
+# streamlit_app.py
+import streamlit as st
+from datetime import datetime
+from pybacktestchain_ss.data_module import UNIVERSE_SEC, FirstTwoMoments
+from pybacktestchain_ss.broker import Backtest, StopLoss, ProfitTaking
+from pybacktestchain_ss.portfolio_strategies import (
+    RiskAverseStrategy,
+    MinimumVarianceStrategy,
+    MaximumReturnStrategy,
+    EqualWeightStrategy,
+    EqualRiskStrategy,
+    MaximumSharpeStrategy
+)
+
+
+def main():
+    st.title("PyBacktestChain - User Interface")
+
+    st.markdown(
+        """
+        **Instructions**  
+        1) Set the start and end dates for your backtest  
+        2) Select one or more stocks from the drop-down list  
+        3) Define initial cash value  
+        4) Select a risk model (StopLoss or ProfitTaking or None)  
+        5) Select a risk threshold  
+        6) Choose a portfolio strategy (Mean-Variance, Equal-Weight, etc.)  
+        7) Press **Run Backtest** to execute!
+        """
+    )
+
+    # 1) Start and end date
+    st.subheader("1) Backtest Date Range")
+    start_date = st.date_input("Start date", value=datetime(2019, 1, 1))
+    end_date = st.date_input("End date", value=datetime(2020, 1, 1))
+    if start_date >= end_date:
+        st.error("Start date must be strictly before End date")
+
+    # 2) Universe selection
+    st.subheader("2) Select Tickers (Universe)")
+    selected_tickers = st.multiselect(
+        "Select tickers from the known universe",
+        options=sorted(UNIVERSE_SEC),
+        default=["AAPL", "MSFT", "WMT", "TSLA", "SNAP"]
+    )
+    if not selected_tickers:
+        st.warning("No tickers selected. Please pick at least one.")
+
+    # 3) Initial cash
+    st.subheader("3) Initial Cash")
+    initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1)
+
+    # 4) Risk Model
+    st.subheader("4) Risk Model")
+    risk_models = {
+        "None": None,
+        "StopLoss": StopLoss,
+        "ProfitTaking": ProfitTaking
+    }
+    selected_risk_model_key = st.selectbox("Select a risk model", list(risk_models.keys()))
+    risk_model_class = risk_models[selected_risk_model_key]  # Will be None if "None"
+
+    # 5) Risk Threshold
+    st.subheader("5) Risk Threshold (0.0 - 1.0)")
+    risk_threshold = st.number_input(
+        "Stop-Loss / Profit-Taking threshold (%)",
+        min_value=0.0,
+        max_value=1.0,
+        value=0.1,
+        step=0.01
+    )
+
+    # 6) Portfolio Strategy
+    st.subheader("6) Portfolio Strategy")
+    strategy_options = {
+        "RiskAverseStrategy (Mean-Variance)": RiskAverseStrategy(),
+        "MinimumVarianceStrategy": MinimumVarianceStrategy(),
+        "MaximumReturnStrategy": MaximumReturnStrategy(),
+        "EqualWeightStrategy": EqualWeightStrategy(),
+        "EqualRiskStrategy (Risk Parity)": EqualRiskStrategy(),
+        "MaximumSharpeStrategy": MaximumSharpeStrategy()
+    }
+    selected_strategy_key = st.selectbox("Select a portfolio strategy", list(strategy_options.keys()))
+    selected_strategy = strategy_options[selected_strategy_key]
+
+    # Button to run the backtest
+    if st.button("Run Backtest"):
+        if start_date >= end_date:
+            st.error("Please correct date range before running backtest.")
+        elif not selected_tickers:
+            st.error("Please select at least one ticker before running backtest.")
+        else:
+            # Create the Backtest instance
+            st.info("Launching backtest. This may take a moment...")
+            try:
+                # Build the actual dates in datetime form
+                start_dt = datetime(start_date.year, start_date.month, start_date.day)
+                end_dt = datetime(end_date.year, end_date.month, end_date.day)
+
+                backtest = Backtest(
+                    initial_date=start_dt,
+                    final_date=end_dt,
+                    universe=selected_tickers,
+                    initial_cash=initial_cash,
+                    information_class=FirstTwoMoments,
+                    risk_model=risk_model_class,
+                    risk_threshold=risk_threshold,
+                    portfolio_strategy=selected_strategy,
+                    verbose=False,   # or True, if you want verbose logs in the console
+                    name_blockchain="backtest_streamlit"
+                )
+                backtest.run_backtest()
+                st.success("Backtest completed! See your console/logs for details.")
+            except Exception as e:
+                st.error(f"Backtest failed: {e}")
+
+
+if __name__ == "__main__":
+    main()
