@@ -5,7 +5,7 @@ from sec_cik_mapper import StockMapper
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import logging 
-from typing import Optional, Type, Callable
+from typing import Callable
 from pybacktestchain_ss.portfolio_strategies import PortfolioStrategy
 
 # Setup logging

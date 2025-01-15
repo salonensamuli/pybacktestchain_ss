@@ -2,16 +2,14 @@ import pandas as pd
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Type, Callable
+from typing import Optional, Type
 
-import sys
 import os 
 import pickle
 from pybacktestchain_ss.data_module import UNIVERSE_SEC, FirstTwoMoments, get_stocks_data, DataModule, Information
 from pybacktestchain_ss.utils import generate_random_name
 from pybacktestchain_ss.blockchain import Block, Blockchain
-from pybacktestchain_ss.portfolio_strategies import PortfolioStrategy, RiskAverseStrategy, MaximumReturnStrategy, MaximumSharpePortfolio, MinimumVarianceStrategy, EqualRiskStrategy, EqualWeightStrategy
-from numba import jit 
+from pybacktestchain_ss.portfolio_strategies import PortfolioStrategy, RiskAverseStrategy
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
