@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, Type
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 import os 
 import pickle
