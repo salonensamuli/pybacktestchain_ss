@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.6.0 (2025-01-16)
+
+### Features
+
+- **plotting**: First attempt at implementing portfolio value plotting over time. Also cleaned the
+  code a little bit (no changes from these).
+  ([`5c8944c`](https://github.com/salonensamuli/pybacktestchain_ss/commit/5c8944c6eaa37fb4a593922ee4c8d8f6bd7728aa))
+
+
 ## v0.5.2 (2025-01-15)
 
 ### Bug Fixes
