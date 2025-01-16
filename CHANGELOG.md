@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.6.1 (2025-01-16)
+
+### Bug Fixes
+
+- **matplotlib**: Fixed the importing of matplotlib. Also added it to poetry lock.
+  ([`6d23c57`](https://github.com/salonensamuli/pybacktestchain_ss/commit/6d23c573636c0310c85d2375390630800c194975))
+
+
 ## v0.6.0 (2025-01-16)
 
 ### Features
