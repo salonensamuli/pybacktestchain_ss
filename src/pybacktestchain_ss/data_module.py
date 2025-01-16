@@ -137,18 +137,13 @@ class FirstTwoMoments(Information):
         data = self.slice_data(t)
         # the information set will be a dictionary with the data
         information_set = {}
-
         # sort data by ticker and date
         data = data.sort_values(by=[self.company_column, self.time_column])
-
         # expected return per company
         data['return'] =  data.groupby(self.company_column)[self.adj_close_column].pct_change() #.mean()
-        
         # expected return by company 
         information_set['expected_return'] = data.groupby(self.company_column)['return'].mean().to_numpy()
-
         # covariance matrix
-
         # 1. pivot the data
         data = data.pivot(index=self.time_column, columns=self.company_column, values=self.adj_close_column)
         # drop missing values

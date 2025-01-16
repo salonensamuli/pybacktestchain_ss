@@ -12,7 +12,6 @@ from pybacktestchain_ss.portfolio_strategies import (
     MaximumSharpeStrategy
 )
 
-
 def main():
     st.title("PyBacktestChain - User Interface")
 
@@ -20,12 +19,12 @@ def main():
         """
         **Instructions**  
         1) Set the start and end dates for your backtest  
-        2) Select one or more stocks from the drop-down list  
-        3) Define initial cash value  
+        2) Select one or more stocks from the drop-down list (includes the whole SEC universe)
+        3) Define initial cash value
         4) Select a risk model (StopLoss or ProfitTaking or None)  
         5) Select a risk threshold  
-        6) Choose a portfolio strategy (Mean-Variance, Equal-Weight, etc.)  
-        7) Press **Run Backtest** to execute!
+        6) Choose a portfolio strategy (Risk Averse, Equal Weight, etc., OBS: if the strategy fails to converge, Equaly Weight is used as default)  
+        7) Press **Run Backtest** to execute
         """
     )
 
@@ -39,7 +38,7 @@ def main():
     # 2) Universe selection
     st.subheader("2) Select Tickers (Universe)")
     selected_tickers = st.multiselect(
-        "Select tickers from the known universe",
+        "Select tickers from the SEC universe",
         options=sorted(UNIVERSE_SEC),
         default=["AAPL", "MSFT", "WMT", "TSLA", "SNAP"]
     )
@@ -48,7 +47,7 @@ def main():
 
     # 3) Initial cash
     st.subheader("3) Initial Cash")
-    initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1)
+    initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1000)
 
     # 4) Risk Model
     st.subheader("4) Risk Model")
@@ -58,7 +57,7 @@ def main():
         "ProfitTaking": ProfitTaking
     }
     selected_risk_model_key = st.selectbox("Select a risk model", list(risk_models.keys()))
-    risk_model_class = risk_models[selected_risk_model_key]  # Will be None if "None"
+    risk_model_class = risk_models[selected_risk_model_key]  # will be None if "None"
 
     # 5) Risk Threshold
     st.subheader("5) Risk Threshold (0.0 - 1.0)")
@@ -83,17 +82,17 @@ def main():
     selected_strategy_key = st.selectbox("Select a portfolio strategy", list(strategy_options.keys()))
     selected_strategy = strategy_options[selected_strategy_key]
 
-    # Button to run the backtest
+    # button to run the backtest
     if st.button("Run Backtest"):
         if start_date >= end_date:
             st.error("Please correct date range before running backtest.")
         elif not selected_tickers:
             st.error("Please select at least one ticker before running backtest.")
         else:
-            # Create the Backtest instance
+            # create the Backtest instance
             st.info("Launching backtest. This may take a moment...")
             try:
-                # Build the actual dates in datetime form
+                # build the actual dates in datetime form
                 start_dt = datetime(start_date.year, start_date.month, start_date.day)
                 end_dt = datetime(end_date.year, end_date.month, end_date.day)
 
