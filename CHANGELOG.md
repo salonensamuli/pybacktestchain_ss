@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.6.2 (2025-01-16)
+
+### Bug Fixes
+
+- **matplotlib**: Now finally fixed it (hope so).
+  ([`1b301b9`](https://github.com/salonensamuli/pybacktestchain_ss/commit/1b301b9bcdb461919e6f634fbb30b64f8a9f0e05))
+
+
 ## v0.6.1 (2025-01-16)
 
 ### Bug Fixes
