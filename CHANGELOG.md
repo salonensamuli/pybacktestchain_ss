@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.2 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Modified column structure to fit the screen better.
+  ([`901d1df`](https://github.com/salonensamuli/pybacktestchain_ss/commit/901d1df518bbe1e7dc5afa4875b8019e036977bc))
+
+
 ## v0.10.1 (2025-01-17)
 
 ### Bug Fixes
