@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.3 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Fixed again the none selection for risk model.
+  ([`53ca284`](https://github.com/salonensamuli/pybacktestchain_ss/commit/53ca284ee7c0647d4307212156746ca3315065ef))
+
+
 ## v0.9.2 (2025-01-17)
 
 ### Bug Fixes
