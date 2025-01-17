@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.8.1 (2025-01-17)
+
+### Bug Fixes
+
+- **broker**: Fixed the broker to download stock price data from -timedelta(s) before the start of
+  the backtesting, to make sure that timedelta amount of data is avavailable so that the information
+  set is complete right from the start.
+  ([`33ac476`](https://github.com/salonensamuli/pybacktestchain_ss/commit/33ac476808863326713f2c5afb9e5870cdecc33f))
+
+
 ## v0.8.0 (2025-01-17)
 
 ### Features
