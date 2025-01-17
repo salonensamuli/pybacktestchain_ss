@@ -30,7 +30,7 @@ def plot_portfolio_pie(portfolio_dict, title="Portfolio"):
 st.set_page_config(layout="wide")
 
 def main():
-    st.title("PyBacktestChain - User Interface")
+    st.title("PyBacktestChain - User interface by Samuli Salonen")
 
     col1, col2, col3 = st.columns(3)
 
@@ -52,6 +52,8 @@ def main():
         end_date = st.date_input("End date", value=datetime(2020, 1, 1))
         if start_date >= end_date:
             st.error("Start date must be strictly before End date")
+
+    with col2:
         # 2) Universe selection
         st.subheader("2) Select tickers (investment universe)")
         selected_tickers = st.multiselect(
@@ -61,11 +63,11 @@ def main():
         )
         if not selected_tickers:
             st.warning("No tickers selected. Please pick at least one.")
-
-    with col2:
         # 3) Initial cash
         st.subheader("3) Initial cash")
         initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1000)
+        
+    with col3:
         # 4) Risk Model
         st.subheader("4) Risk model")
         risk_models = {
@@ -126,28 +128,31 @@ def main():
                     )
                     portfolio_values_df, initial_portfolio_comp, final_portfolio_comp = backtest.run_backtest()
                     st.success("Backtest completed! See your console/logs for details.")
+
+                    c1, c2, c3 = st.columns(3)
+                    with c1:
+                    # portfolio value over time plot
+                        fig, ax = plt.subplots()
+                        ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
+                        ax.set_title("Portfolio value over backtest")
+                        ax.set_xlabel("Date")
+                        ax.set_ylabel("Value")
+                        ax.legend()
+                        st.pyplot(fig)
+                    with c2:
+                    # portfolio initial composition pie
+                        if initial_portfolio_comp:
+                            plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
+                        else:
+                            st.warning("No first portfolio recorded (perhaps was empty).")
+                    with c3:
+                    # portfolio final composition pie
+                        if final_portfolio_comp:
+                            plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
+                        else:
+                            st.warning("No last portfolio recorded.")
                 except Exception as e:
                     st.error(f"Backtest failed: {e}")
-
-    with col3:
-        # portfolio value over time plot
-        fig, ax = plt.subplots()
-        ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
-        ax.set_title("Portfolio value over backtest")
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Value")
-        ax.legend()
-        st.pyplot(fig)
-        # portfolio initial composition pie
-        if initial_portfolio_comp:
-            plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
-        else:
-            st.warning("No first portfolio recorded (perhaps was empty).")
-        # portfolio final composition pie
-        if final_portfolio_comp:
-            plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
-        else:
-            st.warning("No last portfolio recorded.")
             
 if __name__ == "__main__":
     main()
