@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.4 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Fixed the calling of strategies which lead to always equal portfolio.
+  ([`3853192`](https://github.com/salonensamuli/pybacktestchain_ss/commit/385319261192750259b963dd438fe6b49fa18f68))
+
+
 ## v0.9.3 (2025-01-17)
 
 ### Bug Fixes
