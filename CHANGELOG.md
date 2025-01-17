@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.8.0 (2025-01-17)
+
+### Features
+
+- **data_module**: Made the lookback window (s) mutable. This used to be hardcoded as 360, which
+  lead to the first portfolio being all NaNs, as it couldnt compute the information set.
+  ([`a409b83`](https://github.com/salonensamuli/pybacktestchain_ss/commit/a409b837eec8a4bac25a3d261f650134af5d5067))
+
+
 ## v0.7.2 (2025-01-17)
 
 ### Bug Fixes
