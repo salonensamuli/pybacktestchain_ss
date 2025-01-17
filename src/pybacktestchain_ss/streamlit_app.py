@@ -26,7 +26,7 @@ def plot_portfolio_pie(portfolio_dict, title="Portfolio"):
 def main():
     st.title("PyBacktestChain - User Interface")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         st.markdown(
@@ -55,11 +55,11 @@ def main():
         )
         if not selected_tickers:
             st.warning("No tickers selected. Please pick at least one.")
+
+    with col2:
         # 3) Initial cash
         st.subheader("3) Initial cash")
         initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1000)
-
-    with col2:
         # 4) Risk Model
         st.subheader("4) Risk model")
         risk_models = {
@@ -120,29 +120,27 @@ def main():
                     )
                     portfolio_values_df, initial_portfolio_comp, final_portfolio_comp = backtest.run_backtest()
                     st.success("Backtest completed! See your console/logs for details.")
-
-                    c1, c2, c3 = st.columns(3)
-                    with c1:
-                        fig, ax = plt.subplots()
-                        ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
-                        ax.set_title("Portfolio value over backtest")
-                        ax.set_xlabel("Date")
-                        ax.set_ylabel("Value")
-                        ax.legend()
-                        st.pyplot(fig)
-                    with c2:
-                        if initial_portfolio_comp:
-                            plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
-                        else:
-                            st.warning("No first portfolio recorded (perhaps was empty).")
-                    with c3:
-                        if final_portfolio_comp:
-                            plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
-                        else:
-                            st.warning("No last portfolio recorded.")
-
                 except Exception as e:
                     st.error(f"Backtest failed: {e}")
+
+    with col3:
+        if portfolio_values_df:
+            fig, ax = plt.subplots()
+            ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
+            ax.set_title("Portfolio value over backtest")
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Value")
+            ax.legend()
+            st.pyplot(fig)
+
+        if initial_portfolio_comp:
+            plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
+        else:
+            st.warning("No first portfolio recorded (perhaps was empty).")
+        if final_portfolio_comp:
+            plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
+        else:
+            st.warning("No last portfolio recorded.")
             
 if __name__ == "__main__":
     main()
