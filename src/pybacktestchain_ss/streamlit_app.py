@@ -23,10 +23,9 @@ def main():
         1) Set the start and end dates for your backtest  
         2) Select one or more stocks from the drop-down list (includes the whole SEC universe)
         3) Define initial cash value
-        4) Select a risk model (StopLoss or ProfitTaking or None)  
-        5) Select a risk threshold  
-        6) Choose a portfolio strategy (Risk Averse, Equal Weight, etc., OBS: if the strategy fails to converge, Equaly Weight is used as default)  
-        7) Press **Run backtest** to execute
+        4) Select a risk model (StopLoss or ProfitTaking or None) and threshold
+        5) Choose a portfolio strategy (Risk Averse, Equal Weight, etc., OBS: if the strategy fails to converge, Equaly Weight is used as default)  
+        6) Press **Run backtest** to execute
         """
     )
 
@@ -71,12 +70,12 @@ def main():
     # 5) Portfolio Strategy
     st.subheader("5) Portfolio strategy")
     strategy_options = {
-        "RiskAverseStrategy (original strategy)": RiskAverseStrategy(),
-        "MinimumVarianceStrategy": MinimumVarianceStrategy(),
-        "MaximumReturnStrategy": MaximumReturnStrategy(),
-        "EqualWeightStrategy": EqualWeightStrategy(),
-        "EqualRiskStrategy": EqualRiskStrategy(),
-        "MaximumSharpeStrategy": MaximumSharpeStrategy()
+        "RiskAverseStrategy (original strategy)": RiskAverseStrategy,
+        "MinimumVarianceStrategy": MinimumVarianceStrategy,
+        "MaximumReturnStrategy": MaximumReturnStrategy,
+        "EqualWeightStrategy": EqualWeightStrategy,
+        "EqualRiskStrategy": EqualRiskStrategy,
+        "MaximumSharpeStrategy": MaximumSharpeStrategy
     }
     selected_strategy_key = st.selectbox("Select a portfolio strategy", list(strategy_options.keys()))
     selected_strategy = strategy_options[selected_strategy_key]
