@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.4 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Modified the style again with columns.
+  ([`e8f3b82`](https://github.com/salonensamuli/pybacktestchain_ss/commit/e8f3b82eaef2a8d61ff21e3f49a9f9ac2baaa037))
+
+
 ## v0.10.3 (2025-01-17)
 
 ### Bug Fixes
