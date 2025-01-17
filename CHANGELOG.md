@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.10.8 (2025-01-17)
+
+### Bug Fixes
+
+- **tests**: Added tests for the portfolio strategies.
+  ([`354a466`](https://github.com/salonensamuli/pybacktestchain_ss/commit/354a46643158bad13111ec50fd6e3c473bdda343))
+
+- **toml**: Removed some unnecessary requirements
+  ([`a3ef354`](https://github.com/salonensamuli/pybacktestchain_ss/commit/a3ef3540e81a23335b6425368b504d7a437e3646))
+
+
 ## v0.10.7 (2025-01-17)
 
 ### Bug Fixes
