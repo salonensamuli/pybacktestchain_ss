@@ -67,13 +67,9 @@ def main():
         value=0.1,
         step=0.01
     )
-    if risk_model_class is None:
-        risk_model = None
-    else:
-        risk_model = risk_model_class
 
     # 5) Portfolio Strategy
-    st.subheader("6) Portfolio strategy")
+    st.subheader("5) Portfolio strategy")
     strategy_options = {
         "RiskAverseStrategy (original strategy)": RiskAverseStrategy(),
         "MinimumVarianceStrategy": MinimumVarianceStrategy(),
@@ -84,8 +80,7 @@ def main():
     }
     selected_strategy_key = st.selectbox("Select a portfolio strategy", list(strategy_options.keys()))
     selected_strategy = strategy_options[selected_strategy_key]
-
-    # 6) Lookback Window (in days, OBS: THIS MUST BE LARGER THAN THE TIME BETWEEN INITIAL AND END DATES!)
+    # OBS: THIS MUST BE LARGER THAN THE TIME BETWEEN INITIAL AND END DATES!
     lookback_days = st.number_input("Lookback window (days)", value=360, min_value=1)
     lookback_timedelta = timedelta(days=lookback_days)
 
@@ -109,7 +104,7 @@ def main():
                     universe=selected_tickers,
                     initial_cash=initial_cash,
                     information_class=FirstTwoMoments,
-                    risk_model=risk_model,
+                    risk_model=risk_model_class,
                     risk_threshold=risk_threshold,
                     portfolio_strategy=selected_strategy,
                     s=lookback_timedelta,
