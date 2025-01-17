@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.7.0 (2025-01-17)
+
+### Features
+
+- **altair**: Changed from matplotlib to altair as it seems to (according to stackoverflow) work
+  better with streamlit. Also added it to poetry.
+  ([`b4e38f3`](https://github.com/salonensamuli/pybacktestchain_ss/commit/b4e38f39583025a1c94004915e9b4f2ebdfc3704))
+
+
 ## v0.6.2 (2025-01-16)
 
 ### Bug Fixes
