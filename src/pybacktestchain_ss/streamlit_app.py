@@ -12,6 +12,7 @@ from pybacktestchain_ss.portfolio_strategies import (
     MaximumSharpeStrategy
 )
 from matplotlib import pyplot as plt
+from datetime import timedelta
 
 def main():
     st.title("PyBacktestChain - User Interface")
@@ -58,19 +59,20 @@ def main():
         "ProfitTaking": ProfitTaking
     }
     selected_risk_model_key = st.selectbox("Select a risk model", list(risk_models.keys()))
-    risk_model_class = risk_models[selected_risk_model_key]  # will be None if "None"
-
-    # 5) Risk Threshold
-    st.subheader("5) Risk threshold (0.0 - 1.0)")
+    risk_model_class = risk_models[selected_risk_model_key]  # will be None if "None"   
     risk_threshold = st.number_input(
-        "Stop loss / Profit taking threshold (%)",
+        "Risk threshold (0.0-1.0)",
         min_value=0.0,
         max_value=1.0,
         value=0.1,
         step=0.01
     )
+    if risk_model_class is None:
+        risk_model = None
+    else:
+        risk_model = risk_model_class
 
-    # 6) Portfolio Strategy
+    # 5) Portfolio Strategy
     st.subheader("6) Portfolio strategy")
     strategy_options = {
         "RiskAverseStrategy (original strategy)": RiskAverseStrategy(),
@@ -82,6 +84,10 @@ def main():
     }
     selected_strategy_key = st.selectbox("Select a portfolio strategy", list(strategy_options.keys()))
     selected_strategy = strategy_options[selected_strategy_key]
+
+    # 6) Lookback Window (in days, OBS: THIS MUST BE LARGER THAN THE TIME BETWEEN INITIAL AND END DATES!)
+    lookback_days = st.number_input("Lookback window (days)", value=360, min_value=1)
+    lookback_timedelta = timedelta(days=lookback_days)
 
     # button to run the backtest
     if st.button("Run backtest"):
@@ -103,9 +109,10 @@ def main():
                     universe=selected_tickers,
                     initial_cash=initial_cash,
                     information_class=FirstTwoMoments,
-                    risk_model=risk_model_class,
+                    risk_model=risk_model,
                     risk_threshold=risk_threshold,
                     portfolio_strategy=selected_strategy,
+                    s=lookback_timedelta,
                     verbose=False,   # or True, if you want verbose logs in the console
                     name_blockchain="backtest_streamlit"
                 )
