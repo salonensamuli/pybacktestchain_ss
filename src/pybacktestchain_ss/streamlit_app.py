@@ -111,14 +111,15 @@ def main():
                 )
                 portfolio_values_df = backtest.run_backtest()
                 st.success("Backtest completed! See your console/logs for details.")
-            except Exception as e:
-                st.error(f"Backtest failed: {e}")
-            
-            chart = (alt.Chart(portfolio_values_df)
+
+                chart = (alt.Chart(portfolio_values_df)
                      .mark_line()
                      .encode(x="Date", y="Portfolio value")
                      .properties(title="Portfolio value over time"))
-            st.altair_chart(chart, use_container_width=True)
+                st.altair_chart(chart, use_container_width=True)
 
+            except Exception as e:
+                st.error(f"Backtest failed: {e}")
+            
 if __name__ == "__main__":
     main()
