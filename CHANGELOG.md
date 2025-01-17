@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.0 (2025-01-17)
+
+### Features
+
+- **broker**: Fixed the problem with the original pybacktestchain that the portfolio did not
+  initiate until the first rebalancing date. Now the portfolio starts from day1.
+  ([`b8450f9`](https://github.com/salonensamuli/pybacktestchain_ss/commit/b8450f95e4f65ce113baa59454bf8330195fc4d7))
+
+
 ## v0.8.2 (2025-01-17)
 
 ### Bug Fixes
