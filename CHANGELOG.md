@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.8.2 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Fixed the bug that selecting no risk model lead to a crash. Also made lookback
+  window mutable to comply with the previous changes as well.
+  ([`0e3b361`](https://github.com/salonensamuli/pybacktestchain_ss/commit/0e3b3617e00fa5bd7b04a8d8f32923e01a0aaece))
+
+
 ## v0.8.1 (2025-01-17)
 
 ### Bug Fixes
