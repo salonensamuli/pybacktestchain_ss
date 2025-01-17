@@ -160,7 +160,7 @@ class FirstTwoMoments(Information):
             if self.portfolio_strategy is None:
                 # fallback or raise an exception
                 raise ValueError("No portfolio strategy provided.")
-            return self.portfolio_strategy.optimize_portfolio(self, information_set)
+            return self.portfolio_strategy.optimize_portfolio(information_set)
         except Exception as e:
             logging.warning("Error computing portfolio, returning equal weight portfolio")
             logging.warning(e)
