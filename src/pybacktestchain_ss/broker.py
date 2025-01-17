@@ -252,7 +252,7 @@ class Backtest:
     company_column: str = 'ticker'
     adj_close_column: str = 'Adj Close'
     rebalance_flag: type = EndOfMonth # or EndOfWeek
-    risk_model: Optional[Type[RiskModel]] = None # making risk model optional, StopLoss or ProfitTaking
+    risk_model: Optional[RiskModel] = None # making risk model optional, StopLoss or ProfitTaking
     risk_threshold: float = 0.1
     initial_cash: int = 1000000 # making this mutable
     name_blockchain: str = 'backtest'
@@ -268,8 +268,10 @@ class Backtest:
         logging.info(f"Running backtest from {self.initial_date} to {self.final_date}.")
         logging.info(f"Retrieving price data for universe")
         self.risk_model = self.risk_model(threshold=self.risk_threshold if self.risk_model else None)
+        # USING actual_start TO DOWNLOAD DATA S-DAYS BEFORE THE BACKTESTING STARTS SO THAT THE FIRST COMPUTED PORTFOLIO IS NOT FULL OF NaNs
+        actual_start = self.initial_date - self.s
         # self.initial_date to yyyy-mm-dd format
-        init_ = self.initial_date.strftime('%Y-%m-%d')
+        init_ = actual_start.strftime('%Y-%m-%d')
         # self.final_date to yyyy-mm-dd format
         final_ = self.final_date.strftime('%Y-%m-%d')
         df = get_stocks_data(self.universe, init_, final_)
@@ -288,7 +290,8 @@ class Backtest:
         portfolio_values_list = []
         for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):
             if self.risk_model is not None:
-                portfolio = info.compute_portfolio(t, info.compute_information(t))
+                information_set = info.compute_information(t)
+                portfolio = info.compute_portfolio(information_set)
                     #portfolio = self.portfolio_strategy(info, t, info.compute_information(t))
                 prices = info.get_prices(t)     
                 # Trigger stop loss
@@ -302,7 +305,7 @@ class Backtest:
                 logging.info("-----------------------------------")
                 logging.info(f"Rebalancing portfolio at {t}")
                 information_set = info.compute_information(t)
-                portfolio = info.compute_portfolio(t, information_set)
+                portfolio = info.compute_portfolio(information_set)
                     #portfolio = self.portfolio_strategy(info, t, information_set)
                 prices = info.get_prices(t)
                 self.broker.execute_portfolio(portfolio, prices, t)
