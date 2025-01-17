@@ -85,6 +85,17 @@ def main():
         
     with col3:
         # 5) Portfolio Strategy
+        st.markdown(
+            """
+            **Available portfolio strategies**  
+            1) RiskAverse: optimizes the portfolio based on risk-aversion A=1
+            2) MinimumVariance: seeks to find the minimum variance portfolio based on the available stocks
+            3) MaximumReturn: finds the single asset with highest expected return and invests 100%
+            4) EqualWeight: weights each available stock equally
+            5) EqualRisk: known as risk parity, splits the potfolio weights so that each stock contributes equal amount of risk
+            6) MaximumSharpe: optimizes the portfolio to have the maximum Sharpe ratio with risk-free rate of 0% (risk-free rate selection to be implemented)
+            """
+        )
         st.subheader("5) Portfolio strategy")
         strategy_options = {
             "RiskAverseStrategy (original strategy)": RiskAverseStrategy,
