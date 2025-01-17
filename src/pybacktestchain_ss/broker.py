@@ -287,15 +287,16 @@ class Backtest:
                                     company_column=self.company_column,
                                     adj_close_column=self.adj_close_column,
                                     portfolio_strategy=self.portfolio_strategy)
-        
         # Run the backtest
         dates_list = []
         portfolio_values_list = []
+        initial_portfolio_comp = None
+        final_portfolio_comp = None
         for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):  
+            information_set = info.compute_information(t)
+            portfolio = info.compute_portfolio(information_set)
+            prices = info.get_prices(t) 
             if self.risk_model is not None:  
-                information_set = info.compute_information(t)
-                portfolio = info.compute_portfolio(information_set)
-                prices = info.get_prices(t) 
                 # Trigger stop loss
                 if isinstance(self.risk_model, StopLoss):
                     self.risk_model.trigger_stop_loss(t, portfolio, prices, self.broker)
@@ -306,15 +307,17 @@ class Backtest:
             if self.rebalance_flag().time_to_rebalance(t) or t==self.initial_date:
                 logging.info("-----------------------------------")
                 logging.info(f"Rebalancing portfolio at {t}")
-                information_set = info.compute_information(t)
-                portfolio = info.compute_portfolio(information_set)
-                prices = info.get_prices(t)
                 self.broker.execute_portfolio(portfolio, prices, t)
+            # saving the current portfolio values for charting
             current_portfolio_value = self.broker.get_portfolio_value(info.get_prices(t))
             dates_list.append(t)
             portfolio_values_list.append(current_portfolio_value)
-        final_value = self.broker.get_portfolio_value(info.get_prices(self.final_date))
-        logging.info(f"Backtest completed. Final portfolio value: {final_value}")
+            # saving the first and last portfolio compositions for charting
+            if initial_portfolio_comp is None and portfolio:
+                initial_portfolio_comp = portfolio.copy()
+            final_portfolio_comp = portfolio.copy()
+        final_portfolio_value = self.broker.get_portfolio_value(info.get_prices(self.final_date))
+        logging.info(f"Backtest completed. Final portfolio value: {final_portfolio_value}")
         df = self.broker.get_transaction_log()
         # create backtests folder if it does not exist
         if not os.path.exists('backtests'):
@@ -324,4 +327,5 @@ class Backtest:
         # store the backtest in the blockchain
         self.broker.blockchain.add_block(self.backtest_name, df.to_string())
         portfolio_values_df = pd.DataFrame({"Date":dates_list, "Portfolio value":portfolio_values_list})
-        return portfolio_values_df
+        logging.info(portfolio)
+        return portfolio_values_df, initial_portfolio_comp, final_portfolio_comp

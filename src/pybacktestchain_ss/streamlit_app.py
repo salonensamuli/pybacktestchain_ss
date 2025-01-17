@@ -14,6 +14,15 @@ from pybacktestchain_ss.portfolio_strategies import (
 from matplotlib import pyplot as plt
 from datetime import timedelta
 
+# plotting function for portfolio compositions
+def plot_portfolio_pie(portfolio_dict, title="Portfolio"):
+    labels = list(portfolio_dict.keys())
+    sizes = list(portfolio_dict.values())
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140)
+    ax.set_title(title)
+    st.pyplot(fig)
+
 def main():
     st.title("PyBacktestChain - User Interface")
 
@@ -22,9 +31,9 @@ def main():
         **Instructions**  
         1) Set the start and end dates for your backtest  
         2) Select one or more stocks from the drop-down list (includes the whole SEC universe)
-        3) Define initial cash value
+        3) Define an initial cash value
         4) Select a risk model (StopLoss or ProfitTaking or None) and threshold
-        5) Choose a portfolio strategy (Risk Averse, Equal Weight, etc., OBS: if the strategy fails to converge, Equaly Weight is used as default)  
+        5) Choose a portfolio strategy (if the strategy fails to converge, Equal Weight is used as default)  
         6) Press **Run backtest** to execute
         """
     )
@@ -110,7 +119,7 @@ def main():
                     verbose=False,   # or True, if you want verbose logs in the console
                     name_blockchain="backtest_streamlit"
                 )
-                portfolio_values_df = backtest.run_backtest()
+                portfolio_values_df, initial_portfolio_comp, final_portfolio_comp = backtest.run_backtest()
                 st.success("Backtest completed! See your console/logs for details.")
 
                 fig, ax = plt.subplots()
@@ -120,6 +129,15 @@ def main():
                 ax.set_ylabel("Value")
                 ax.legend()
                 st.pyplot(fig)
+                
+                if initial_portfolio_comp:
+                    plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at First Rebalance")
+                else:
+                    st.warning("No first portfolio recorded (perhaps was empty).")
+                if final_portfolio_comp:
+                    plot_portfolio_pie(final_portfolio_comp, title="Portfolio at Last Rebalance")
+                else:
+                    st.warning("No last portfolio recorded.")
 
             except Exception as e:
                 st.error(f"Backtest failed: {e}")
