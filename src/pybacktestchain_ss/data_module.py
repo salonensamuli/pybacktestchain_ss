@@ -2,7 +2,7 @@
 import yfinance as yf
 import pandas as pd 
 from sec_cik_mapper import StockMapper
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import logging 
 from typing import Callable
@@ -85,7 +85,7 @@ class DataModule:
 # Interface for the information set 
 @dataclass
 class Information:
-    s: timedelta = timedelta(days=360) # Time step (rolling window)
+    s: timedelta = field(default_factory=lambda: timedelta(days=360)) # Time step (rolling window)
     data_module: DataModule = None # Data module
     time_column: str = 'Date'
     company_column: str = 'ticker'
@@ -96,8 +96,6 @@ class Information:
 
         # Get the data module 
         data = self.data_module.data
-        # Get the time step 
-        s = self.s
 
         # Convert both `t` and the data column to timezone-aware, if needed
         if t.tzinfo is not None:
@@ -108,7 +106,7 @@ class Information:
             data[self.time_column] = pd.to_datetime(data[self.time_column]).dt.tz_localize(None)
         
         # Get the data only between t-s and t
-        data = data[(data[self.time_column] >= t - s) & (data[self.time_column] < t)]
+        data = data[(data[self.time_column] >= t - self.s) & (data[self.time_column] < t)]
         return data
 
     def get_prices(self, t : datetime):
@@ -121,10 +119,10 @@ class Information:
         prices = prices.to_dict()
         return prices
 
-    def compute_information(self, t : datetime):  
+    def compute_information(self, t:datetime):  
         pass
 
-    def compute_portfolio(self, t:datetime):
+    def compute_portfolio(self, information_set:dict):
         pass
 
 @dataclass
@@ -132,7 +130,7 @@ class FirstTwoMoments(Information):
  
     portfolio_strategy: PortfolioStrategy = None
 
-    def compute_information(self, t : datetime):
+    def compute_information(self, t:datetime):
         # Get the data module 
         data = self.slice_data(t)
         # the information set will be a dictionary with the data
@@ -157,7 +155,7 @@ class FirstTwoMoments(Information):
         information_set['companies'] = data.columns.to_numpy()
         return information_set
 
-    def compute_portfolio(self, t: datetime, information_set: dict):
+    def compute_portfolio(self, information_set:dict):
         try:
             if self.portfolio_strategy is None:
                 # fallback or raise an exception
