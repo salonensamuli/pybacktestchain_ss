@@ -11,7 +11,7 @@ from pybacktestchain_ss.portfolio_strategies import (
     EqualRiskStrategy,
     MaximumSharpeStrategy
 )
-import altair as alt
+from matplotlib import pyplot as plt
 
 def main():
     st.title("PyBacktestChain - User Interface")
@@ -25,7 +25,7 @@ def main():
         4) Select a risk model (StopLoss or ProfitTaking or None)  
         5) Select a risk threshold  
         6) Choose a portfolio strategy (Risk Averse, Equal Weight, etc., OBS: if the strategy fails to converge, Equaly Weight is used as default)  
-        7) Press **Run Backtest** to execute
+        7) Press **Run backtest** to execute
         """
     )
 
@@ -112,11 +112,13 @@ def main():
                 portfolio_values_df = backtest.run_backtest()
                 st.success("Backtest completed! See your console/logs for details.")
 
-                chart = (alt.Chart(portfolio_values_df)
-                     .mark_line()
-                     .encode(x="Date", y="Portfolio value")
-                     .properties(title="Portfolio value over time"))
-                st.altair_chart(chart, use_container_width=True)
+                fig, ax = plt.subplots()
+                ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
+                ax.set_title("Portfolio value over backtest")
+                ax.set_xlabel("Date")
+                ax.set_ylabel("Value")
+                ax.legend()
+                st.pyplot(fig)
 
             except Exception as e:
                 st.error(f"Backtest failed: {e}")
