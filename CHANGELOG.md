@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.9.2 (2025-01-17)
+
+### Bug Fixes
+
+- **portfolio_strategies**: Removed self from the functions for them to operate properly. Also
+  changed the broker to not initiate new buys if quantity is zero.
+  ([`e4beeee`](https://github.com/salonensamuli/pybacktestchain_ss/commit/e4beeeecde0c8118313f40b7f23d87e6be8f3ada))
+
+
 ## v0.9.1 (2025-01-17)
 
 ### Bug Fixes
