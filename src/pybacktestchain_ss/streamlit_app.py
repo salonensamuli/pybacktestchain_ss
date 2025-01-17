@@ -73,7 +73,6 @@ def main():
             "StopLoss": StopLoss,
             "ProfitTaking": ProfitTaking
         }
-    with col3:
         selected_risk_model_key = st.selectbox("Select a risk model", list(risk_models.keys()))
         risk_model_class = risk_models[selected_risk_model_key]  # will be None if "None"   
         risk_threshold = st.number_input(
@@ -83,6 +82,8 @@ def main():
             value=0.1,
             step=0.01
         )
+        
+    with col3:
         # 5) Portfolio Strategy
         st.subheader("5) Portfolio strategy")
         strategy_options = {
