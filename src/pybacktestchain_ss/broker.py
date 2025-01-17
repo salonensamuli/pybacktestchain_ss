@@ -68,6 +68,8 @@ class Broker:
 
     def buy(self, ticker: str, quantity: int, price: float, date: datetime):
         """Executes a buy order for the specified ticker."""
+        if quantity == 0:
+            return
         total_cost = price * quantity
         if self.cash >= total_cost:
             self.cash -= total_cost
@@ -267,7 +269,8 @@ class Backtest:
     def run_backtest(self):
         logging.info(f"Running backtest from {self.initial_date} to {self.final_date}.")
         logging.info(f"Retrieving price data for universe")
-        self.risk_model = self.risk_model(threshold=self.risk_threshold if self.risk_model else None)
+        if self.risk_model is not None:
+            self.risk_model = self.risk_model(threshold=self.risk_threshold)
         # USING actual_start TO DOWNLOAD DATA S-DAYS BEFORE THE BACKTESTING STARTS SO THAT THE FIRST COMPUTED PORTFOLIO IS NOT FULL OF NaNs
         actual_start = self.initial_date - self.s
         # self.initial_date to yyyy-mm-dd format
@@ -288,25 +291,23 @@ class Backtest:
         # Run the backtest
         dates_list = []
         portfolio_values_list = []
-        for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):
-            if self.risk_model is not None:
+        for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):  
+            if self.risk_model is not None:  
                 information_set = info.compute_information(t)
                 portfolio = info.compute_portfolio(information_set)
-                    #portfolio = self.portfolio_strategy(info, t, info.compute_information(t))
-                prices = info.get_prices(t)     
+                prices = info.get_prices(t) 
                 # Trigger stop loss
                 if isinstance(self.risk_model, StopLoss):
                     self.risk_model.trigger_stop_loss(t, portfolio, prices, self.broker)
                 # Trigger profit-taking
                 if isinstance(self.risk_model, ProfitTaking):
                     self.risk_model.trigger_profit_taking(t, portfolio, prices, self.broker)
-
-            if self.rebalance_flag().time_to_rebalance(t):
+            # now the portfolio will be done on day1 instead of the first rebalancing date        
+            if self.rebalance_flag().time_to_rebalance(t) or t==self.initial_date:
                 logging.info("-----------------------------------")
                 logging.info(f"Rebalancing portfolio at {t}")
                 information_set = info.compute_information(t)
                 portfolio = info.compute_portfolio(information_set)
-                    #portfolio = self.portfolio_strategy(info, t, information_set)
                 prices = info.get_prices(t)
                 self.broker.execute_portfolio(portfolio, prices, t)
             current_portfolio_value = self.broker.get_portfolio_value(info.get_prices(t))
