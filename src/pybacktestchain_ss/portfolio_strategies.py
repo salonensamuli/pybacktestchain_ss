@@ -13,7 +13,7 @@ class PortfolioStrategy(ABC):
 
 @dataclass
 class RiskAverseStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set):
+    def optimize_portfolio(information_set):
         try:
             mu = information_set['expected_return']
             Sigma = information_set['covariance_matrix']
@@ -49,7 +49,7 @@ class RiskAverseStrategy(PortfolioStrategy):
 
 @dataclass
 class MinimumVarianceStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set):
+    def optimize_portfolio(information_set):
         """ Finding the minimum variance portfolio which is the vertex of the parabola (closed form solution)"""
         try:
             Sigma = information_set['covariance_matrix']
@@ -69,7 +69,7 @@ class MinimumVarianceStrategy(PortfolioStrategy):
 
 @dataclass 
 class MaximumReturnStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set):
+    def optimize_portfolio(information_set):
         """ Finding the asset with the highest expected return and investing all into that """
         try:
             mu = information_set['expected_return']
@@ -88,7 +88,7 @@ class MaximumReturnStrategy(PortfolioStrategy):
 
 @dataclass
 class EqualWeightStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set):
+    def optimize_portfolio(information_set):
         """" Classic equally weighted portfolio """
         try:
             companies = information_set['companies']
@@ -103,7 +103,7 @@ class EqualWeightStrategy(PortfolioStrategy):
 
 @dataclass
 class EqualRiskStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set):
+    def optimize_portfolio(information_set):
         """" Weighting each asset so that the risk contributed is equal (also known as risk parity) """
         try:
             Sigma = information_set['covariance_matrix']
@@ -138,7 +138,7 @@ class EqualRiskStrategy(PortfolioStrategy):
 
 @dataclass
 class MaximumSharpeStrategy(PortfolioStrategy):
-    def optimize_portfolio(self, information_set, risk_free_rate=0.0):
+    def optimize_portfolio(information_set, risk_free_rate=0.0):
         """ Finding the maximum sharpe portfolio, aka tangency portfolio (with closed form solution) """
         try:
             mu = information_set['expected_return']
