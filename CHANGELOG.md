@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.7.1 (2025-01-17)
+
+### Bug Fixes
+
+- **altair**: Fixed the identation as chart was outside the try and couldnt access the
+  portfolio_values_df.
+  ([`9cef3ba`](https://github.com/salonensamuli/pybacktestchain_ss/commit/9cef3bafa2df671f6c152e5129c771a5ad38231b))
+
+
 ## v0.7.0 (2025-01-17)
 
 ### Features
