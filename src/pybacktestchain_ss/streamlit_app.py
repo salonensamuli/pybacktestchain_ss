@@ -66,8 +66,6 @@ def main():
         # 3) Initial cash
         st.subheader("3) Initial cash")
         initial_cash = st.number_input("How much cash to start with?", value=1000000, min_value=1, step=1000)
-        
-    with col3:
         # 4) Risk Model
         st.subheader("4) Risk model")
         risk_models = {
@@ -75,6 +73,7 @@ def main():
             "StopLoss": StopLoss,
             "ProfitTaking": ProfitTaking
         }
+    with col3:
         selected_risk_model_key = st.selectbox("Select a risk model", list(risk_models.keys()))
         risk_model_class = risk_models[selected_risk_model_key]  # will be None if "None"   
         risk_threshold = st.number_input(
@@ -99,60 +98,62 @@ def main():
         # OBS: THIS MUST BE LARGER THAN THE TIME BETWEEN INITIAL AND END DATES!
         lookback_days = st.number_input("Lookback window (days)", value=360, min_value=1)
         lookback_timedelta = timedelta(days=lookback_days)
-
         # button to run the backtest
-        if st.button("Run backtest"):
-            if start_date >= end_date:
-                st.error("Please correct date range before running backtest.")
-            elif not selected_tickers:
-                st.error("Please select at least one ticker before running backtest.")
-            else:
-                # create the Backtest instance
-                st.info("Launching backtest. This may take a moment...")
-                try:
-                    # build the actual dates in datetime form
-                    start_dt = datetime(start_date.year, start_date.month, start_date.day)
-                    end_dt = datetime(end_date.year, end_date.month, end_date.day)
-                    backtest = Backtest(
-                        initial_date=start_dt,
-                        final_date=end_dt,
-                        universe=selected_tickers,
-                        initial_cash=initial_cash,
-                        information_class=FirstTwoMoments,
-                        risk_model=risk_model_class,
-                        risk_threshold=risk_threshold,
-                        portfolio_strategy=selected_strategy,
-                        s=lookback_timedelta,
-                        verbose=False,   # or True, if you want verbose logs in the console
-                        name_blockchain="backtest_streamlit"
-                    )
-                    portfolio_values_df, initial_portfolio_comp, final_portfolio_comp = backtest.run_backtest()
-                    st.success("Backtest completed! See your console/logs for details.")
+        run_button = st.button("Run backtest")
+        
+    if run_button:
+        if start_date >= end_date:
+            st.error("Please correct date range before running backtest.")
+            return
+        elif not selected_tickers:
+            st.error("Please select at least one ticker before running backtest.")
+            return
+        else:
+            # create the Backtest instance
+            st.info("Launching backtest. This may take a moment...")
+            try:
+                # build the actual dates in datetime form
+                start_dt = datetime(start_date.year, start_date.month, start_date.day)
+                end_dt = datetime(end_date.year, end_date.month, end_date.day)
+                backtest = Backtest(
+                    initial_date=start_dt,
+                    final_date=end_dt,
+                    universe=selected_tickers,
+                    initial_cash=initial_cash,
+                    information_class=FirstTwoMoments,
+                    risk_model=risk_model_class,
+                    risk_threshold=risk_threshold,
+                    portfolio_strategy=selected_strategy,
+                    s=lookback_timedelta,
+                    verbose=False,   # or True, if you want verbose logs in the console
+                    name_blockchain="backtest_streamlit"
+                )
+                portfolio_values_df, initial_portfolio_comp, final_portfolio_comp = backtest.run_backtest()
+                st.success("Backtest completed! See console/logs for details.")
 
-                    c1, c2, c3 = st.columns(3)
-                    with c1:
-                    # portfolio value over time plot
-                        fig, ax = plt.subplots()
-                        ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
-                        ax.set_title("Portfolio value over backtest")
-                        ax.set_xlabel("Date")
-                        ax.set_ylabel("Value")
-                        ax.legend()
-                        st.pyplot(fig)
-                    with c2:
-                    # portfolio initial composition pie
-                        if initial_portfolio_comp:
-                            plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
-                        else:
-                            st.warning("No first portfolio recorded (perhaps was empty).")
-                    with c3:
-                    # portfolio final composition pie
-                        if final_portfolio_comp:
-                            plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
-                        else:
-                            st.warning("No last portfolio recorded.")
-                except Exception as e:
-                    st.error(f"Backtest failed: {e}")
-            
+                with col1:
+                # portfolio value over time plot
+                    fig, ax = plt.subplots()
+                    ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
+                    ax.set_title("Portfolio value over backtest")
+                    ax.set_xlabel("Date")
+                    ax.set_ylabel("Value")
+                    ax.legend()
+                    st.pyplot(fig)
+                with col2:
+                # portfolio initial composition pie
+                    if initial_portfolio_comp:
+                        plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
+                    else:
+                        st.warning("No first portfolio recorded (perhaps was empty).")
+                with col3:
+                # portfolio final composition pie
+                    if final_portfolio_comp:
+                        plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
+                    else:
+                        st.warning("No last portfolio recorded.")
+            except Exception as e:
+                st.error(f"Backtest failed: {e}")
+        
 if __name__ == "__main__":
     main()
