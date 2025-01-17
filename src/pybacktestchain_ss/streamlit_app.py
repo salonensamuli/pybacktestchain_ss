@@ -23,6 +23,8 @@ def plot_portfolio_pie(portfolio_dict, title="Portfolio"):
     ax.set_title(title)
     st.pyplot(fig)
 
+st.set_page_config(layout="wide")
+
 def main():
     st.title("PyBacktestChain - User Interface")
 
@@ -124,19 +126,20 @@ def main():
                     st.error(f"Backtest failed: {e}")
 
     with col3:
-        if portfolio_values_df:
-            fig, ax = plt.subplots()
-            ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
-            ax.set_title("Portfolio value over backtest")
-            ax.set_xlabel("Date")
-            ax.set_ylabel("Value")
-            ax.legend()
-            st.pyplot(fig)
-
+        # portfolio value over time plot
+        fig, ax = plt.subplots()
+        ax.plot(portfolio_values_df["Date"], portfolio_values_df["Portfolio value"], label="Portfolio value", color="green")
+        ax.set_title("Portfolio value over backtest")
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Value")
+        ax.legend()
+        st.pyplot(fig)
+        # portfolio initial composition pie
         if initial_portfolio_comp:
             plot_portfolio_pie(initial_portfolio_comp, title="Portfolio at the beginning")
         else:
             st.warning("No first portfolio recorded (perhaps was empty).")
+        # portfolio final composition pie
         if final_portfolio_comp:
             plot_portfolio_pie(final_portfolio_comp, title="Portfolio at the end")
         else:
