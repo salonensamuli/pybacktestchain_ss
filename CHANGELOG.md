@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.10.0 (2025-01-17)
+
+### Features
+
+- **streamlit**: Added new plots for portfolio compositions. Also made backtesting code a bit easier
+  to read by reducing duplicate coding.
+  ([`f5e457c`](https://github.com/salonensamuli/pybacktestchain_ss/commit/f5e457c5b8d508edbf572a6365d81955d0f4973d))
+
+
 ## v0.9.4 (2025-01-17)
 
 ### Bug Fixes
