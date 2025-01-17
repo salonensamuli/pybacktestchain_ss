@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.7 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Added portfolio strategy desciptions.
+  ([`31275d0`](https://github.com/salonensamuli/pybacktestchain_ss/commit/31275d051f1c1ef0eb7feaaccedf4cefa9231624))
+
+
 ## v0.10.6 (2025-01-17)
 
 ### Bug Fixes
