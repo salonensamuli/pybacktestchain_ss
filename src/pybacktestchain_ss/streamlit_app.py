@@ -14,6 +14,10 @@ from pybacktestchain_ss.portfolio_strategies import (
 from matplotlib import pyplot as plt
 from datetime import timedelta
 
+portfolio_values_df = None
+initial_portfolio_comp = {}
+final_portfolio_comp = {}
+
 # plotting function for portfolio compositions
 def plot_portfolio_pie(portfolio_dict, title="Portfolio"):
     labels = list(portfolio_dict.keys())
