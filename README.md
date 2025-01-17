@@ -27,7 +27,7 @@ streamlit run streamlit_app.py
 ```
 or access directly via https://pybacktestchainss.streamlit.app/
 
-## Step-by-step guide
+## Step-by-step guide for Streamlit app
 
 1. Choose start/end dates for the backtest
 2. Choose stocks from the SEC universe (typing the ticker or selecting from the dropdown)
@@ -35,6 +35,36 @@ or access directly via https://pybacktestchainss.streamlit.app/
 4. Specify a risk model (StopLoss or ProfitTaking) and its threshold
 5. Pick a portfolio optimization strategy (risk-averse, min variance, etc.)
 6. Run the backtest, then view the final and initial portfolio allocations as pie charts, and a line chart of the portfolio value over time
+
+## Step-by-step guide for regular use
+
+```bash
+from pybacktestchain_ss.data_module import FirstTwoMoments
+from pybacktestchain_ss.broker import Backtest, StopLoss, ProfitTaking
+from pybacktestchain_ss.portfolio_strategies import RiskAverseStrategy, \
+    MaximumReturnStrategy, MinimumVarianceStrategy, MaximumSharpeStrategy, EqualRiskStrategy, EqualWeightStrategy
+from datetime import datetime, timedelta
+
+# Set verbosity for logging
+verbose = False  # Set to True to enable logging, or False to suppress it
+backtest = Backtest(
+    initial_date=datetime(2019, 1, 1),
+    final_date=datetime(2020, 1, 1),
+    universe = ['AAPL', 'MSFT', "WMT", "TSLA", "SNAP"],
+    initial_cash = 1000000,
+    information_class=FirstTwoMoments,
+    risk_model=StopLoss,
+    risk_threshold=0.1,
+    name_blockchain="backtest",
+    portfolio_strategy=EqualRiskStrategy,
+    s=timedelta(days=360),
+    verbose=verbose
+)
+
+df, initial_port, final_port = backtest.run_backtest()
+df["Portfolio value"].plot();
+
+```
 
 ## Contributing
 
