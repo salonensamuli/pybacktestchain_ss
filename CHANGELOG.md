@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.3 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Fixed the column 3's access to the desired dataframes and dictionaries.
+  ([`5b2cfdb`](https://github.com/salonensamuli/pybacktestchain_ss/commit/5b2cfdb9fccf30c51ecdf4d6705fc55461a18505))
+
+
 ## v0.10.2 (2025-01-17)
 
 ### Bug Fixes
