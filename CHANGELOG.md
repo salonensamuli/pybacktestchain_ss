@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.6 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Had one typo fixed.
+  ([`06ff0d2`](https://github.com/salonensamuli/pybacktestchain_ss/commit/06ff0d2303e19a4d6315e62158c87bac2680ca69))
+
+
 ## v0.10.5 (2025-01-17)
 
 ### Bug Fixes
