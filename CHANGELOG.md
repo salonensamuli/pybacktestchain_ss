@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.10.1 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Making the streamlit app site nicer with more organized structure.
+  ([`76592be`](https://github.com/salonensamuli/pybacktestchain_ss/commit/76592be186062c40955aa42fab2f8838c95c5555))
+
+
 ## v0.10.0 (2025-01-17)
 
 ### Features
