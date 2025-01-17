@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.7.2 (2025-01-17)
+
+### Bug Fixes
+
+- **altair**: Switching back to matplotlib as I couldnt make altair work after all..
+  ([`2be9e68`](https://github.com/salonensamuli/pybacktestchain_ss/commit/2be9e68122c71d145e4ed5bad627e5706f9883cf))
+
+
 ## v0.7.1 (2025-01-17)
 
 ### Bug Fixes
