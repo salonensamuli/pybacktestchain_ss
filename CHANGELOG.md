@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.10.5 (2025-01-17)
+
+### Bug Fixes
+
+- **streamlit**: Moved the actual backtest running outside the columns to make graphs appear below
+  the selection area.
+  ([`e2ba551`](https://github.com/salonensamuli/pybacktestchain_ss/commit/e2ba5516b60efc9706f05643a72aef54ff69f978))
+
+
 ## v0.10.4 (2025-01-17)
 
 ### Bug Fixes
