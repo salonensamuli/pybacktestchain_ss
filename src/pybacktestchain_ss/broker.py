@@ -285,7 +285,8 @@ class Backtest:
                                     portfolio_strategy=self.portfolio_strategy)
         
         # Run the backtest
-        portfolio_values = [self.initial_cash]
+        dates_list = []
+        portfolio_values_list = []
         for t in pd.date_range(start=self.initial_date, end=self.final_date, freq='D'):
             if self.risk_model is not None:
                 portfolio = info.compute_portfolio(t, info.compute_information(t))
@@ -307,10 +308,10 @@ class Backtest:
                 prices = info.get_prices(t)
                 self.broker.execute_portfolio(portfolio, prices, t)
             current_portfolio_value = self.broker.get_portfolio_value(info.get_prices(t))
-            portfolio_values.append(current_portfolio_value)
-            logging.info(f"Current portfolio value: {current_portfolio_value}")
-
-        logging.info(f"Backtest completed. Final portfolio value: {self.broker.get_portfolio_value(info.get_prices(self.final_date))}")
+            dates_list.append(t)
+            portfolio_values_list.append(current_portfolio_value)
+        final_value = self.broker.get_portfolio_value(info.get_prices(self.final_date))
+        logging.info(f"Backtest completed. Final portfolio value: {final_value}")
         df = self.broker.get_transaction_log()
         # create backtests folder if it does not exist
         if not os.path.exists('backtests'):
@@ -319,4 +320,5 @@ class Backtest:
         df.to_csv(f"backtests/{self.backtest_name}.csv")
         # store the backtest in the blockchain
         self.broker.blockchain.add_block(self.backtest_name, df.to_string())
-        plt.plot(portfolio_values);
+        portfolio_values_df = pd.DataFrame({"Date":dates_list, "Portfolio value":portfolio_values_list})
+        return portfolio_values_df
