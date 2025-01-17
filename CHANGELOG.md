@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.1 (2025-01-17)
+
+### Bug Fixes
+
+- **data_module**: Fixed the compute_portfolio function.
+  ([`7d3d1d1`](https://github.com/salonensamuli/pybacktestchain_ss/commit/7d3d1d1f97448fc1410412cf86841ed357e2c687))
+
+
 ## v0.9.0 (2025-01-17)
 
 ### Features
